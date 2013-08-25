@@ -24,6 +24,8 @@ The `-k` flag can be used to keep the file instead of immediately removing them 
 
     cbz.sh -k comiclist
 
+The `-h` flag will print the usage and exit.
+
 
 ###Excluded files
 * `.DS_Store` - Used by OS X to store folder metadata and appearance preferences.

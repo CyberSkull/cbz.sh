@@ -17,7 +17,7 @@ do
 		remove_flag=""
 		;;
 	"h")	#print usage
-		echo "USAGE: cbz [kh] DIRECTORY ..."
+		echo "USAGE: cbz [-k][-h] DIRECTORY ..."
 		echo "-h print this help screen"
 		echo "-k keep originals"
 		exit 0
