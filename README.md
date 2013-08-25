@@ -13,6 +13,7 @@ Finally, it will play a sound when finished.
 
 ###Usage
 `cbz.sh` takes any kind of list of folders to convert to a cbz archive.
+
     cbz.sh comic1 [comic2…]
 
     cbz.sh "comic by some dude" ["another comic by that guy"…]
