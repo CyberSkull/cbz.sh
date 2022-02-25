@@ -2,7 +2,7 @@
 
 
 ### Dependancies
-* `bash`
+* `zsh` (orignally written for `bash`)
 * `zip` (version 3)
 * `afplay`
 
