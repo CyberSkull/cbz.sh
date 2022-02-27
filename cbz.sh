@@ -85,22 +85,22 @@ reset_style_warn=$reset
 while getopts "kho" flag
 do
 	case $flag in
-	k)	#clears remove flag
-		echo "Keeping originals."
-		remove_flag=""
-		;;
-	h)	#print usage
-		echo -n "USAGE: ${style_command}cbz${reset_style_command} "
-    echo -n "[${style_flag}-h${reset_style_flag}]"
-    echo -n "[${style_flag}-k${reset_style_flag}] "
-    echo    "${style_dir}DIRECTORY…${reset_style_dir}"
-		echo "${style_flag}-h${reset_style_flag} Print this help screen."
-		echo "${style_flag}-k${reset_style_flag} Keep originals."
-		#echo "${style_flag}-o${reset_style_flag} Output directory."
-    #echo "${style_flag}-q${reset_style_flag} Quite mode. No terminal output."
-    #echo "${style_flag}-s${reset_style_flag} Silent mode. No sound when done."
-		exit 1
-		;;
+    k) #clears remove flag
+  		echo "Keeping originals."
+  		remove_flag=""
+  		;;
+    h) #print usage
+      echo -n "USAGE: ${style_command}cbz${reset_style_command} "
+      echo -n "[${style_flag}-h${reset_style_flag}]"
+      echo -n "[${style_flag}-k${reset_style_flag}] "
+      echo    "${style_dir}DIRECTORY…${reset_style_dir}"
+      echo "${style_flag}-h${reset_style_flag} Print this help screen."
+      echo "${style_flag}-k${reset_style_flag} Keep originals."
+      #echo "${style_flag}-o${reset_style_flag} Output directory."
+      #echo "${style_flag}-q${reset_style_flag} Quite mode. No terminal output."
+      #echo "${style_flag}-s${reset_style_flag} Silent mode. No sound when done."
+      exit 1
+      ;;
 	esac
 done
 
@@ -124,23 +124,23 @@ do
         echo -n ${style_flag}"-x"${reset_style_flag}" " #exclude flag
         echo -n \"${style_exclude}"*.DS_Store"${reset_style_exclude}\"" " #exclude DS_Store
         echo -n \"${style_exclude}"*[Tt]humbs.db"${reset_style_exclude}\" #exclude Thumbs.db
-        echo
+        echo $reset
 
 				# -m delete originals, -r recursive, -T test zip, -y store symlink, -9 maximum compression, -x exclude list
 				zip -"$remove_flag$recursive_flag$test_flag$symlink_flag$compression" "$archive.cbz" "$target" -x "*.DS_Store" "*[Tt]humbs.db"
-        echo
+        echo $reset
 
 			else
 				echo "${style_error}Not readable: ${style_dir}$target${reset_style_dir}${reset_error}"
-        echo
+        echo $reset
 			fi	#-r
 		else
 			echo "${style_error}Not a directory: ${style_file}$target${reset_style_file}${reset_error}"
-      echo
+      echo $reset
 		fi #-d
 	else
 		echo "${style_error}Not found: ${style_file}$target${reset_style_file}${reset_error}"
-    echo
+    echo $reset
 	fi	#-e
 done
 
@@ -151,6 +151,6 @@ then
   then
   	afplay "$complete"
   else
-  	echo "\a${style_warn}Sorry, the complete sound \"$style_file$complete$reset_style_file\" could not be found or read.$reset"
+  	echo "\a${style_warn}Sorry, the complete sound \"${style_file}$complete${reset_style_file}\" could not be found or read.${reset}"
   fi
 fi
