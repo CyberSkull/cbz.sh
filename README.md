@@ -1,3 +1,4 @@
+# cbz.sh
 *cbz.sh* is a simple command line shell script (bash) to take a folder and turn it into a comic book zip archive (a zip archive with a `cbz` file name extension instead of `zip`).
 
 
