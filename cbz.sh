@@ -65,6 +65,22 @@ bg_light_blue="\e[104m"
 bg_light_magenta="\e[105m"
 bg_light_cyan="\e[106m"
 
+#using styles based on the above for cleaner code
+style_command=$bold
+reset_style_command=$reset_dim
+reset_style_flag=$reset_dim
+style_flag=$bold
+style_file=$underline
+reset_style_file=$reset_underline
+style_dir=$blue$underline
+reset_style_dir=$foreground$reset_underline
+style_exclude=$dim$strikethrough
+reset_style_exclude=$reset_dim$reset_strikethrough
+style_error=$red$bold
+reset_style_error=$reset
+style_warn=$yellow
+reset_style_warn=$reset
+
 
 while getopts "kho" flag
 do
@@ -74,12 +90,15 @@ do
 		remove_flag=""
 		;;
 	h)	#print usage
-		echo "USAGE: ${bold}cbz${reset_dim} [${bold}-h${reset_dim}][${bold}-k${reset_dim}] ${underline}DIRECTORY…${reset_underline}"
-		echo "${bold}-h${reset_dim} Print this help screen."
-		echo "${bold}-k${reset_dim} Keep originals."
-		#echo "${bold}-o${reset_dim} Output directory."
-    #echo "${bold}-q${reset_dim} Quite mode. No terminal output."
-    #echo "${bold}-s${reset_dim} Silent mode. No sound when done."
+		echo -n "USAGE: ${style_command}cbz${reset_style_command} "
+    echo -n "[${style_flag}-h${reset_style_flag}]"
+    echo -n "[${style_flag}-k${reset_style_flag}] "
+    echo    "${style_dir}DIRECTORY…${reset_style_dir}"
+		echo "${style_flag}-h${reset_style_flag} Print this help screen."
+		echo "${style_flag}-k${reset_style_flag} Keep originals."
+		#echo "${style_flag}-o${reset_style_flag} Output directory."
+    #echo "${style_flag}-q${reset_style_flag} Quite mode. No terminal output."
+    #echo "${style_flag}-s${reset_style_flag} Silent mode. No sound when done."
 		exit 1
 		;;
 	esac
@@ -89,34 +108,39 @@ for target in "$@"
 do
 	if [[ -e $target ]]	#exists
 	then
-		if [[ -r $target ]]	#readable
+		if [[ -d $target ]]	#directory
 		then
-			if [[ -d $target ]]	#directory
+			if [[ -r $target ]]	#readable
 			then
-        $count++
+        count+=1
 				archive=${target%/}
-				echo "\U1F4E6 Archiving: ${blue}${underline}$target${foreground}${reset_underline}"
+				echo "${reset}Archiving: ${style_dir}$target${reset_style_dir}"
 
         #Big fancy printout of the zip command.
-				echo -n ${reset}${bold}zip${reset_dim}" " #zip
-        echo -n ${bold}"-$remove_flag$recursive_flag$test_flag$symlink_flag$compression"${reset_dim}" " #flags
-        echo -n \"${underline}"$archive.cbz"${reset_underline}"\" " #comic book zip archive
-        echo -n \"${underline}${blue}"$target"${foreground}${reset_underline}"\" " #source
-        echo -n ${bold}"-x"${reset_dim}" " #exclude flag
-        echo -n \"${dim}${strikethrough}"*.DS_Store"${reset_dim}${reset_strikethrough}\"" " #exclude DS_Store
-        echo -n \"${dim}${strikethrough}"*[Tt]humbs.db"${reset_dim}${reset}\" #exclude Thumbs.db
+				echo -n ${reset}${style_command}zip${reset_style_command}" " #zip
+        echo -n ${style_flag}"-$remove_flag$recursive_flag$test_flag$symlink_flag$compression"${reset_style_flag}" " #flags
+        echo -n \"${style_file}"$archive.cbz"${reset_style_file}"\" " #comic book zip archive
+        echo -n \"${style_dir}"$target"${reset_style_dir}"\" " #source
+        echo -n ${style_flag}"-x"${reset_style_flag}" " #exclude flag
+        echo -n \"${style_exclude}"*.DS_Store"${reset_style_exclude}\"" " #exclude DS_Store
+        echo -n \"${style_exclude}"*[Tt]humbs.db"${reset_style_exclude}\" #exclude Thumbs.db
         echo
 
 				# -m delete originals, -r recursive, -T test zip, -y store symlink, -9 maximum compression, -x exclude list
 				zip -"$remove_flag$recursive_flag$test_flag$symlink_flag$compression" "$archive.cbz" "$target" -x "*.DS_Store" "*[Tt]humbs.db"
+        echo
+
 			else
-				echo "\a$bold${red}Not a directory: $underline$target$reset"
-			fi	#-d
+				echo "${style_error}Not readable: ${style_dir}$target${reset_style_dir}${reset_error}"
+        echo
+			fi	#-r
 		else
-			echo "\a$bold${red}Not readable: $underline$target$reset"
-		fi #-r
+			echo "${style_error}Not a directory: ${style_file}$target${reset_style_file}${reset_error}"
+      echo
+		fi #-d
 	else
-		echo "\a${bold}${italic}${red}Not found:${reset_italic} $underline$target$reset"
+		echo "${style_error}Not found: ${style_file}$target${reset_style_file}${reset_error}"
+    echo
 	fi	#-e
 done
 
@@ -127,6 +151,6 @@ then
   then
   	afplay "$complete"
   else
-  	echo "\a${red}Sorry, the complete sound \"$underline$complete$reset_underline\" could not be found or read.$reset"
+  	echo "\a${style_warn}Sorry, the complete sound \"$style_file$complete$reset_style_file\" could not be found or read.$reset"
   fi
 fi
