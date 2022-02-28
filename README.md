@@ -4,7 +4,7 @@
 
 ### Dependancies
 * `zsh` (orignally written for `bash`)
-* `zip` (version 3)
+* `zip` (Info-Zip version 3)
 * `afplay`
 
 ### Process
