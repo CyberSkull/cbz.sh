@@ -65,6 +65,13 @@ bg_light_blue="\e[104m"
 bg_light_magenta="\e[105m"
 bg_light_cyan="\e[106m"
 
+#OSC
+icontab="\e]0;"
+icontitle="\e]1;"
+tabtitle="\e]2;"
+documenttitle="\e]6;"
+workingdirectory="\e]7;"
+
 #using styles based on the above for cleaner code
 style_command=$bold
 reset_style_command=$reset_dim
@@ -81,8 +88,49 @@ reset_style_error=$reset
 style_warn=$yellow
 reset_style_warn=$reset
 
+usage="USAGE:\t${style_command}`basename $0`${reset_style_command}"
+usage+=" [${style_flag}-h${reset_style_flag}]"
+usage+=" [${style_flag}-k${reset_style_flag}]"
+usage+=" ${style_dir}DIRECTORY…${reset_style_dir}"
+usage+="\n\t${style_flag}-h${reset_style_flag} Print this help screen."
+usage+="\n\t${style_flag}-k${reset_style_flag} Keep originals."
+#usage+="${style_flag}-o${reset_style_flag} Output directory."
+#usage+="${style_flag}-q${reset_style_flag} Quite mode. No terminal output."
+#usage+="${style_flag}-s${reset_style_flag} Silent mode. No sound when done."
 
-while getopts "kho" flag
+function urlencode()
+{
+	local LC_ALL=C #clears locale flags, ensures multibyte characters get printed properly. I hope.
+	local string=""
+	local character=""
+
+	for string in $@
+	do
+		for character in ${(s[])string}
+		do
+			case $character in
+				[0-9a-zA-Z/.~_-])
+					printf '%s' "$character"
+					;;
+				*)
+					printf '%%%02X' "'$character"
+					;;
+			esac
+		done
+	done
+}
+
+
+if [ $# -eq 0 ] #print usage and quit if no arguments
+then
+	echo $usage
+	exit 1
+fi
+
+echo -ne "${icontitle}Comic Book Zip\a" #set terminal icon & tab name to "CBZ", only applies to X-11
+echo -ne "${workingdirectory}file://$(urlencode $(hostname)$(pwd)/)\a" #set working dicrectory
+
+while getopts "kh" flag #process flags
 do
 	case $flag in
     k) #clears remove flag
@@ -90,15 +138,7 @@ do
   		remove_flag=""
   		;;
     h) #print usage
-      echo -n "USAGE: ${style_command}cbz${reset_style_command} "
-      echo -n "[${style_flag}-h${reset_style_flag}]"
-      echo -n "[${style_flag}-k${reset_style_flag}] "
-      echo    "${style_dir}DIRECTORY…${reset_style_dir}"
-      echo "${style_flag}-h${reset_style_flag} Print this help screen."
-      echo "${style_flag}-k${reset_style_flag} Keep originals."
-      #echo "${style_flag}-o${reset_style_flag} Output directory."
-      #echo "${style_flag}-q${reset_style_flag} Quite mode. No terminal output."
-      #echo "${style_flag}-s${reset_style_flag} Silent mode. No sound when done."
+      echo $usage
       exit 1
       ;;
 	esac
@@ -115,20 +155,25 @@ do
         count+=1
 				archive=${target%/}
 				echo "${reset}Archiving: ${style_dir}$target${reset_style_dir}"
+				echo -ne "${tabtitle}Archiving…\a" #set tab title to "Archiving…"
+				echo -ne "${documenttitle}file://$(urlencode $(hostname)$(pwd)/$archive.cbz)\a" #set document to archive
+
 
         #Big fancy printout of the zip command.
-				echo -n ${reset}${style_command}zip${reset_style_command}" " #zip
-        echo -n ${style_flag}"-$remove_flag$recursive_flag$test_flag$symlink_flag$compression"${reset_style_flag}" " #flags
-        echo -n \"${style_file}"$archive.cbz"${reset_style_file}"\" " #comic book zip archive
-        echo -n \"${style_dir}"$target"${reset_style_dir}"\" " #source
-        echo -n ${style_flag}"-x"${reset_style_flag}" " #exclude flag
-        echo -n \"${style_exclude}"*.DS_Store"${reset_style_exclude}\"" " #exclude DS_Store
-        echo -n \"${style_exclude}"*[Tt]humbs.db"${reset_style_exclude}\" #exclude Thumbs.db
+				echo -ne ${reset}${style_command}zip${reset_style_command}" " #zip
+        echo -ne ${style_flag}"-$remove_flag$recursive_flag$test_flag$symlink_flag$compression"${reset_style_flag}" " #flags
+        echo -ne \"${style_file}"$archive.cbz"${reset_style_file}"\" " #comic book zip archive
+        echo -ne \"${style_dir}"$target"${reset_style_dir}"\" " #source
+        echo -ne ${style_flag}"-x"${reset_style_flag}" " #exclude flag
+        echo -ne \"${style_exclude}"*.DS_Store"${reset_style_exclude}"\" " #exclude DS_Store
+        echo -ne \"${style_exclude}"*[Tt]humbs.db"${reset_style_exclude}\" #exclude Thumbs.db
         echo $reset
 
 				# -m delete originals, -r recursive, -T test zip, -y store symlink, -9 maximum compression, -x exclude list
 				zip -"$remove_flag$recursive_flag$test_flag$symlink_flag$compression" "$archive.cbz" "$target" -x "*.DS_Store" "*[Tt]humbs.db"
-        echo $reset
+				echo -ne "${tabtitle}\a" #set tab/window title to empty. Resets it?
+				echo -ne "${documenttitle}\a" #set document to empty. Resets it?
+				echo $reset
 
 			else
 				echo "${style_error}Not readable: ${style_dir}$target${reset_style_dir}${reset_error}"
@@ -154,3 +199,5 @@ then
   	echo "\a${style_warn}Sorry, the complete sound \"${style_file}$complete${reset_style_file}\" could not be found or read.${reset}"
   fi
 fi
+
+echo -ne "${icontab}\a${documenttitle}\a${workingdirectory}\a" #clear xterm names
