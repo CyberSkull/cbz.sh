@@ -14,16 +14,23 @@ Finally, it will play a sound when finished.
 ### Usage
 `cbz.sh` takes any kind of list of folders to convert to a cbz archive.
 
-    cbz.sh comic1 [comic2…]
+```zsh
+cbz.sh [-k] comic1 [comic2…]
 
-    cbz.sh "comic by some dude" ["another comic by that guy"…]
+cbz.sh -h
+```
 
-    cbz.sh comic*
-    
+#### Examples
+```zsh
+cbz.sh "comic by some dude" ["another comic by that guy"…]
+
+cbz.sh comic*
+```
+
 The `-k` flag can be used to keep the file instead of immediately removing them on success.
-
-    cbz.sh -k comiclist
-
+```zsh
+cbz.sh -k comic1 [comic2…]
+```
 The `-h` flag will print the usage and exit.
 
 
